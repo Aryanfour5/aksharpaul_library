@@ -188,7 +188,7 @@ public class SignIn extends javax.swing.JFrame {
     private void btnloginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnloginActionPerformed
         PreparedStatement pst;
         ResultSet rs;
-        Connection c=Connect.ConnectToDB();
+        Connection c=Connect.getConnection();
         try {
             pst=c.prepareStatement("SELECT * FROM libfinal.login where userid=? AND password=?");
             pst.setString(1,txtemail.getText());

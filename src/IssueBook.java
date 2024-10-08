@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 public class IssueBook extends javax.swing.JFrame {
         PreparedStatement pst;
         ResultSet rs;
-        Connection c=Connect.ConnectToDB();
+        Connection c=Connect.getConnection();
     /**
      * Creates new form IssueBook
      */
@@ -56,11 +56,11 @@ public void clear(){
         jLabel6 = new javax.swing.JLabel();
         btnissue = new javax.swing.JButton();
         txtstudentid = new javax.swing.JTextField();
-        txtbookname = new javax.swing.JTextField();
         txtissuedate = new javax.swing.JTextField();
         txtduedate = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        txtbookname = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
 
@@ -75,11 +75,11 @@ public void clear(){
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 100, 260, 90));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel3.setText("Student ID");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 280, 240, 40));
+        jLabel3.setText("Student name");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 280, 240, 40));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel4.setText("Book Name");
+        jLabel4.setText("Book Code");
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 360, 250, 40));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -102,18 +102,24 @@ public void clear(){
         getContentPane().add(btnissue, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 630, 130, 40));
 
         txtstudentid.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        txtstudentid.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtstudentidActionPerformed(evt);
+            }
+        });
         getContentPane().add(txtstudentid, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 280, 350, 40));
-
-        txtbookname.setEditable(false);
-        txtbookname.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        getContentPane().add(txtbookname, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 360, 350, 40));
 
         txtissuedate.setEditable(false);
         txtissuedate.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        txtissuedate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtissuedateActionPerformed(evt);
+            }
+        });
         getContentPane().add(txtissuedate, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 440, 350, 40));
 
         txtduedate.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        getContentPane().add(txtduedate, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 530, 350, 40));
+        getContentPane().add(txtduedate, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 530, 350, 40));
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/close icon.png"))); // NOI18N
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -134,6 +140,9 @@ public void clear(){
         });
         getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 200, -1, 30));
 
+        txtbookname.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        getContentPane().add(txtbookname, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 360, 350, 40));
+
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/log in new.jpg"))); // NOI18N
         getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1140, 770));
 
@@ -151,7 +160,36 @@ public void clear(){
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void btnissueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnissueActionPerformed
-      /*  if(txtid.getText().equals("")){
+         if (txtstudentid.getText().isEmpty() || /*txtbookname.getText().isEmpty() || */ txtduedate.getText().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please fill in all fields before issuing a book.");
+        return;
+    }
+
+    try {
+        // Prepare the SQL INSERT statement
+        String insertQuery = "INSERT INTO books_issues (book_code, studentname, issue_date, due_date) VALUES (?, ?, STR_TO_DATE(?, '%d/%m/%Y'), STR_TO_DATE(?, '%d/%m/%Y'));";
+        pst = c.prepareStatement(insertQuery);
+
+        // Set the parameters for the query
+        pst.setString(1, txtbookname.getText()); // Assuming txtbookname contains the book_code
+        pst.setString(2, txtstudentid.getText()); // Set student name
+        pst.setString(3, txtissuedate.getText()); // Issue date
+        pst.setString(4, txtduedate.getText()); // Due date
+
+        // Execute the update
+        int rowsAffected = pst.executeUpdate();
+        if (rowsAffected > 0) {
+            JOptionPane.showMessageDialog(this, "Book issued successfully.");
+            clear(); // Clear the input fields after successful issue
+            txtissuedate.setText(java.time.LocalDate.now().toString());
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to issue the book. Please try again.");
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(IssueBook.class.getName()).log(Level.SEVERE, null, ex);
+        JOptionPane.showMessageDialog(this, "An error occurred while issuing the book: " + ex.getMessage());
+    }
+        /*  if(txtid.getText().equals("")){
                 JOptionPane.showMessageDialog(rootPane, "Please enter Book ID and Search it again");
                 //txtid.requestFocus();
         }
@@ -189,6 +227,14 @@ public void clear(){
             Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
         }        // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtissuedateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtissuedateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtissuedateActionPerformed
+
+    private void txtstudentidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtstudentidActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtstudentidActionPerformed
 
     /**
      * @param args the command line arguments

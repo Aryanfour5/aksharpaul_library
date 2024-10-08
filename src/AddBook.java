@@ -58,6 +58,7 @@ public class AddBook extends javax.swing.JFrame {
         jLabel16 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jTextField6 = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
 
         jLabel4.setBackground(new java.awt.Color(153, 255, 102));
         jLabel4.setForeground(new java.awt.Color(102, 204, 0));
@@ -142,6 +143,7 @@ public class AddBook extends javax.swing.JFrame {
 
         jTextField6.setText("jTextField3");
         getContentPane().add(jTextField6, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 620, 270, -1));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -296,6 +298,7 @@ pst.setString(7,jTextField6.getText());
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  * @author Sudhir Kushwaha
  */
 public class ReturnBook extends javax.swing.JFrame {
-    Connection c=Connect.ConnectToDB();
+    Connection c=Connect.getConnection();
     PreparedStatement pst;
     ResultSet rs;
                 

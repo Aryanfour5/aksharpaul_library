@@ -117,7 +117,7 @@ public void clear(){
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void btnsaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsaveActionPerformed
-         Connection c = Connect.ConnectToDB();
+         Connection c = Connect.getConnection();
         try {
             // Insert query to save student record
             PreparedStatement pst = c.prepareStatement("INSERT INTO student (name, std, section) VALUES (?, ?, ?)");
