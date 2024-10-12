@@ -36,8 +36,10 @@ public class IssueBook extends javax.swing.JFrame {
 public void clear(){
         txtbookname.setText("");
         txtduedate.setText("");
-        txtissuedate.setText("");
-        txtstudentid.setText("");
+        SimpleDateFormat  dat=new SimpleDateFormat("dd/MM/yyyy ");
+         Date d=new Date();
+         txtissuedate.setText(dat.format(d));        
+         txtstudentid.setText("");
        // txtid.setText("");
     }
     /**
@@ -167,6 +169,22 @@ public void clear(){
 
     try {
         // Prepare the SQL INSERT statement
+        
+        // Check if the book is available
+        String checkBookQuery = "SELECT coding, title, qty_for_issue FROM new_bitwise WHERE coding = ?";
+        PreparedStatement pstCheck = c.prepareStatement(checkBookQuery);
+        pstCheck.setString(1, txtbookname.getText());
+        ResultSet rs = pstCheck.executeQuery();
+
+        if (rs.next()) {
+            int issuedQuantity = rs.getInt("qty_for_issue");
+
+            // Check if copies are available for issue
+            if (issuedQuantity <= 0) {
+                JOptionPane.showMessageDialog(this, "No copies available for this book.");
+                return;
+            }
+  
         String insertQuery = "INSERT INTO books_issues (book_code, studentname, issue_date, due_date) VALUES (?, ?, STR_TO_DATE(?, '%d/%m/%Y'), STR_TO_DATE(?, '%d/%m/%Y'));";
         pst = c.prepareStatement(insertQuery);
 
@@ -175,15 +193,23 @@ public void clear(){
         pst.setString(2, txtstudentid.getText()); // Set student name
         pst.setString(3, txtissuedate.getText()); // Issue date
         pst.setString(4, txtduedate.getText()); // Due date
+        
+            
 
         // Execute the update
         int rowsAffected = pst.executeUpdate();
         if (rowsAffected > 0) {
+            String updateBookQuery = "UPDATE new_bitwise SET qty_for_issue = qty_for_issue - 1 WHERE coding = ?";
+            PreparedStatement pstUpdate = c.prepareStatement(updateBookQuery);
+            pstUpdate.setString(1, txtbookname.getText());
+            pstUpdate.executeUpdate();
             JOptionPane.showMessageDialog(this, "Book issued successfully.");
             clear(); // Clear the input fields after successful issue
-            txtissuedate.setText(java.time.LocalDate.now().toString());
         } else {
             JOptionPane.showMessageDialog(this, "Failed to issue the book. Please try again.");
+        }
+        } else {
+            JOptionPane.showMessageDialog(this, "Book not found.");
         }
     } catch (SQLException ex) {
         Logger.getLogger(IssueBook.class.getName()).log(Level.SEVERE, null, ex);

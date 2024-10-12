@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -17,20 +19,27 @@ import java.util.logging.Logger;
 public class ReturnBook extends javax.swing.JFrame {
     Connection c=Connect.getConnection();
     PreparedStatement pst;
+    PreparedStatement pst2;
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // Adjust date format as per your need
+    Date currentDate = new Date();
     ResultSet rs;
                 
     /**
      * Creates new form ReturnBook
      */
     public ReturnBook() {
-        initComponents();
-    }
+    initComponents();
+    
+    // Set the return date to today's date
+    
+    txtissuedate.setText(sdf.format(currentDate));
+}
     public void clear(){
        // txtbookid.setText("");
         txtbookname.setText("");
-        txtduedate.setText("");
-        txtissuedate.setText("");
-        txtstudentid.setText("");
+        //txtduedate.setText("");
+        txtissuedate.setText(sdf.format(currentDate));
+        //txtstudentid.setText("");
         txtstudentname.setText("");
     }
     /**
@@ -43,15 +52,11 @@ public class ReturnBook extends javax.swing.JFrame {
     private void initComponents() {
 
         jButton6 = new javax.swing.JButton();
-        txtduedate = new javax.swing.JTextField();
         txtissuedate = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         txtbookname = new javax.swing.JTextField();
-        txtstudentid = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
         txtstudentname = new javax.swing.JTextField();
@@ -70,44 +75,30 @@ public class ReturnBook extends javax.swing.JFrame {
         });
         getContentPane().add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(1088, 0, 50, -1));
 
-        txtduedate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        getContentPane().add(txtduedate, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 500, 350, 40));
-
         txtissuedate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        getContentPane().add(txtissuedate, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 430, 350, 40));
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel3.setText("Student ID");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 190, 270, 50));
+        getContentPane().add(txtissuedate, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 410, 350, 40));
 
         jButton1.setBackground(new java.awt.Color(204, 0, 0));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton1.setForeground(new java.awt.Color(242, 242, 242));
-        jButton1.setText("Return");
+        jButton1.setText("Search");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 580, 130, 40));
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 560, 130, 40));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel5.setText("Issue Date");
-        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 420, 270, 50));
+        jLabel5.setText("Return Date");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 410, 270, 50));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel6.setText("Book Name");
-        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 350, 220, 50));
-
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel7.setText("Due Date");
-        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 490, 270, 50));
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 320, 220, 50));
 
         txtbookname.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        getContentPane().add(txtbookname, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 360, 350, 40));
-
-        txtstudentid.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        getContentPane().add(txtstudentid, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 200, 350, 40));
+        getContentPane().add(txtbookname, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 330, 350, 40));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(242, 242, 242));
@@ -118,20 +109,21 @@ public class ReturnBook extends javax.swing.JFrame {
         jButton2.setBackground(new java.awt.Color(204, 0, 0));
         jButton2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jButton2.setForeground(new java.awt.Color(242, 242, 242));
-        jButton2.setText("Search");
+        jButton2.setText("Return");
+        jButton2.setActionCommand("Return");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 580, 110, 40));
+        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 550, 130, 50));
 
         txtstudentname.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        getContentPane().add(txtstudentname, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 280, 350, 40));
+        getContentPane().add(txtstudentname, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 250, 350, 40));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel8.setText("Student Name");
-        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 270, 220, 50));
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 240, 220, 50));
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/log in new.jpg"))); // NOI18N
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -4, 1140, 770));
@@ -146,27 +138,33 @@ public class ReturnBook extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if(txtbookname.getText().equals("") || txtstudentname.getText().equals("")) {
+        JOptionPane.showMessageDialog(rootPane, "Please search for the book and student first.");
+    } else {
         try {
-            pst=c.prepareStatement("SELECT * FROM library.book where id=?");
-            pst.setString(1, txtstudentid.getText());
-            rs=pst.executeQuery();
-            if(rs.next()){
-                    txtbookname.setText(rs.getString("name"));
-                //    txtbookid.setText(rs.getString("id"));
-                    txtissuedate.setText(rs.getString("issue"));
-                    txtduedate.setText(rs.getString("due"));
+            // Update return date and book quantity in the database
+            pst = c.prepareStatement("UPDATE books_issues SET return_date = STR_TO_DATE(?, '%d/%m/%Y') WHERE book_code = ? AND studentname=?;");
+            pst.setString(1, txtissuedate.getText()); // Return date from the field
+            pst.setString(2, txtbookname.getText()); // Book code
+            pst.setString(3, txtstudentname.getText()); //student name
+            int updateBook = pst.executeUpdate();
+
+            if(updateBook > 0) {
+                pst2=c.prepareStatement("update new_bitwise set qty_for_issue = qty_for_issue + 1 where coding=?;");
+                pst2.setString(1, txtbookname.getText()); // Book code
+                pst2.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Return Successful. Book quantity updated.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Error: Could not update return information.");
             }
-            else
-                JOptionPane.showMessageDialog(this, "Please Enter Valied Student ID");
-            pst=c.prepareStatement("SELECT * FROM library.student where id=?");
-            pst.setString(1, txtstudentid.getText());
-            rs=pst.executeQuery();
-            if(rs.next())
-                    txtstudentname.setText(rs.getString("name"));
-            
+
+            // Clear the fields after return
+            clear();
+
         } catch (SQLException ex) {
-            Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
-        }        // TODO add your handling code here:
+            Logger.getLogger(ReturnBook.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }   // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -228,16 +226,12 @@ public class ReturnBook extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JTextField txtbookname;
-    private javax.swing.JTextField txtduedate;
     private javax.swing.JTextField txtissuedate;
-    private javax.swing.JTextField txtstudentid;
     private javax.swing.JTextField txtstudentname;
     // End of variables declaration//GEN-END:variables
 }
