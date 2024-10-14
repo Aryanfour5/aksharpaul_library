@@ -1,13 +1,17 @@
 
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -23,6 +27,9 @@ public class IssueBook extends javax.swing.JFrame {
         PreparedStatement pst;
         ResultSet rs;
         Connection c=Connect.getConnection();
+        private Timer timer;
+        private static final Logger logger = Logger.getLogger(IssueBook.class.getName());
+
     /**
      * Creates new form IssueBook
      */
@@ -31,6 +38,8 @@ public class IssueBook extends javax.swing.JFrame {
         SimpleDateFormat  dat=new SimpleDateFormat("dd/MM/yyyy ");
          Date d=new Date();
          txtissuedate.setText(dat.format(d));
+         
+         checkOverdueBooks();
          
     }
 public void clear(){
@@ -162,7 +171,7 @@ public void clear(){
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void btnissueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnissueActionPerformed
-         if (txtstudentid.getText().isEmpty() || /*txtbookname.getText().isEmpty() || */ txtduedate.getText().isEmpty()) {
+         if (txtstudentid.getText().isEmpty() /* || txtbookname.getText().isEmpty() ||  txtduedate.getText().isEmpty()*/) {
         JOptionPane.showMessageDialog(this, "Please fill in all fields before issuing a book.");
         return;
     }
@@ -185,19 +194,17 @@ public void clear(){
                 return;
             }
   
-        String insertQuery = "INSERT INTO books_issues (book_code, studentname, issue_date, due_date) VALUES (?, ?, STR_TO_DATE(?, '%d/%m/%Y'), STR_TO_DATE(?, '%d/%m/%Y'));";
-        pst = c.prepareStatement(insertQuery);
+        // Modify the INSERT query to exclude 'due_date'
+String insertQuery = "INSERT INTO books_issues (book_code, studentname, issue_date) VALUES (?, ?, STR_TO_DATE(?, '%d/%m/%Y'));";
+pst = c.prepareStatement(insertQuery);
 
-        // Set the parameters for the query
-        pst.setString(1, txtbookname.getText()); // Assuming txtbookname contains the book_code
-        pst.setString(2, txtstudentid.getText()); // Set student name
-        pst.setString(3, txtissuedate.getText()); // Issue date
-        pst.setString(4, txtduedate.getText()); // Due date
-        
-            
+// Set the parameters for the query
+pst.setString(1, txtbookname.getText()); // Assuming txtbookname contains the book_code
+pst.setString(2, txtstudentid.getText()); // Set student name
+pst.setString(3, txtissuedate.getText()); // Issue date
 
-        // Execute the update
-        int rowsAffected = pst.executeUpdate();
+// Execute the update
+int rowsAffected = pst.executeUpdate();
         if (rowsAffected > 0) {
             String updateBookQuery = "UPDATE new_bitwise SET qty_for_issue = qty_for_issue - 1 WHERE coding = ?";
             PreparedStatement pstUpdate = c.prepareStatement(updateBookQuery);
@@ -265,6 +272,88 @@ public void clear(){
     /**
      * @param args the command line arguments
      */
+      public void checkOverdueBooks() {
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                logger.info("Running overdue book check...");
+                String query = "SELECT book_code, studentname, due_date FROM books_issues WHERE due_date < CURDATE() AND (notified = FALSE OR notified IS NULL);";
+                try (PreparedStatement pst = c.prepareStatement(query);
+                     ResultSet rs = pst.executeQuery()) {
+
+                    while (rs.next()) {
+                        String bookCode = rs.getString("book_code");
+                        String studentName = rs.getString("studentname");
+                        Date dueDate = rs.getDate("due_date");
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                        String dueDateStr = sdf.format(dueDate);
+
+                        String message = "Book with code " + bookCode + " issued to " + studentName + " was due on " + dueDateStr + ".";
+
+                        // Display the alert on the Event Dispatch Thread
+                        SwingUtilities.invokeLater(() -> {
+                            JOptionPane.showMessageDialog(null, message, "Overdue Book Alert", JOptionPane.WARNING_MESSAGE);
+                        });
+
+                        // Mark as notified to prevent multiple alerts
+                        String updateQuery = "UPDATE books_issues SET notified = TRUE WHERE book_code = ? AND studentname = ? AND due_date = ?";
+                        try (PreparedStatement pstUpdate = c.prepareStatement(updateQuery)) {
+                            pstUpdate.setString(1, bookCode);
+                            pstUpdate.setString(2, studentName);
+                            pstUpdate.setDate(3, new java.sql.Date(dueDate.getTime()));
+                            pstUpdate.executeUpdate();
+                        } catch (SQLException ex) {
+                            logger.log(Level.SEVERE, null, ex);
+                        }
+                    }
+
+                } catch (SQLException ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                    SwingUtilities.invokeLater(() -> {
+                        JOptionPane.showMessageDialog(null, "Error checking overdue books: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    });
+                }
+            }
+        };
+
+        // *** Modification for Testing: Schedule to run every 10 seconds ***
+       /* long delay = 0; // Start immediately
+        long period = 10 * 1000; // 10 seconds
+        timer.scheduleAtFixedRate(task, delay, period);  */
+        
+        // *** After testing, replace the above scheduling with the original one ***
+        
+        // Schedule the task to run once a day at a specific time (e.g., 9 AM)
+        Date now = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date firstRun = null;
+        try {
+            firstRun = sdf.parse(new SimpleDateFormat("dd/MM/yyyy").format(now) + " 09:00:00");
+        } catch (ParseException e) {
+            e.printStackTrace();
+            firstRun = new Date(now.getTime() + 1000); // Next second if parsing fails
+        }
+
+        if (now.after(firstRun)) {
+            // If current time is past 9 AM today, schedule for next day
+            firstRun = new Date(firstRun.getTime() + 24 * 60 * 60 * 1000);
+        }
+
+        long period = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+        timer.scheduleAtFixedRate(task, firstRun, period);
+        
+    }
+
+    // Override the dispose method to cancel the timer when the window is closed
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (timer != null) {
+            timer.cancel();
+        }
+    }
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
