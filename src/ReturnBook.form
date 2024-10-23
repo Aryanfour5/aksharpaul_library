@@ -93,7 +93,7 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Segoe UI" size="18" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Book Name"/>
+        <Property name="text" type="java.lang.String" value="Book Code"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -144,7 +144,6 @@
           <Color blue="f2" green="f2" red="f2" type="rgb"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Return"/>
-        <Property name="actionCommand" type="java.lang.String" value="Return"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>

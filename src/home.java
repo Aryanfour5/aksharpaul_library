@@ -11,12 +11,22 @@ import javax.swing.JOptionPane;
  * @author Sudhir Kushwaha
  */
 public class home extends javax.swing.JFrame {
-
+     private javax.swing.JFrame currentFrame;
     /**
      * Creates new form home
      */
     public home() {
         initComponents();
+        // Initialize currentFrame as null (nothing open initially)
+        currentFrame = null;
+    }
+    
+    // Helper method to close the currently open frame (if any)
+    private void closeCurrentFrame() {
+        if (currentFrame != null) {
+            currentFrame.dispose(); // Close the current frame
+            currentFrame = null; // Reset currentFrame to null
+        }
     }
 
     /**
@@ -64,13 +74,15 @@ public class home extends javax.swing.JFrame {
         jButton3.setBackground(new java.awt.Color(204, 0, 0));
         jButton3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton3.setForeground(new java.awt.Color(242, 242, 242));
-        jButton3.setText("reutrn book");
+        jButton3.setText("return book");
+        jButton3.setActionCommand("return book");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
         getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(1160, 480, 180, 60));
+        jButton3.getAccessibleContext().setAccessibleName("return book");
 
         jButton4.setBackground(new java.awt.Color(204, 0, 0));
         jButton4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -111,6 +123,10 @@ public class home extends javax.swing.JFrame {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
     int yes=JOptionPane.showConfirmDialog(this, "Are you really Close this application?","Exit",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
         if(yes==JOptionPane.YES_OPTION){
+             // Close the currently opened frame (if any)
+            closeCurrentFrame();
+
+            // Exit the application
             System.exit(0);
         }       
                                            
@@ -120,25 +136,43 @@ public class home extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
     int yes=JOptionPane.showConfirmDialog(this, "Are you really Logout ?", "Logut",JOptionPane.YES_NO_OPTION);
        if(JOptionPane.YES_OPTION==yes){
+            closeCurrentFrame();
             new SignIn().setVisible(true);
             dispose();
        }        // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        new StudentRegistration().setVisible(true);        // TODO add your handling code here:
+        closeCurrentFrame();
+        
+        // Open the new frame and store its reference in currentFrame
+        currentFrame = new StudentRegistration();
+        currentFrame.setVisible(true);        // TODO add your handling code here:
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        new AddBook().setVisible(true);        // TODO add your handling code here:
+        // Close the currently opened frame before opening the new one
+        closeCurrentFrame();
+
+        // Open the new frame and store its reference in currentFrame
+        currentFrame = new AddBook();
+        currentFrame.setVisible(true);       // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-                new IssueBook().setVisible(true);
+           closeCurrentFrame();
+
+        // Open the new frame and store its reference in currentFrame
+        currentFrame = new IssueBook();
+        currentFrame.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        new ReturnBook().setVisible(true);// TODO add your handling code here:
+         closeCurrentFrame();
+
+        // Open the new frame and store its reference in currentFrame
+        currentFrame = new ReturnBook();
+        currentFrame.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

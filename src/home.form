@@ -80,8 +80,12 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="f2" green="f2" red="f2" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="reutrn book"/>
+        <Property name="text" type="java.lang.String" value="return book"/>
+        <Property name="actionCommand" type="java.lang.String" value="return book"/>
       </Properties>
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="return book"/>
+      </AccessibilityProperties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
       </Events>

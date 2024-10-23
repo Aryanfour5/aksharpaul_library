@@ -94,7 +94,7 @@ public class ReturnBook extends javax.swing.JFrame {
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 410, 270, 50));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel6.setText("Book Name");
+        jLabel6.setText("Book Code");
         getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 320, 220, 50));
 
         txtbookname.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -110,7 +110,6 @@ public class ReturnBook extends javax.swing.JFrame {
         jButton2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jButton2.setForeground(new java.awt.Color(242, 242, 242));
         jButton2.setText("Return");
-        jButton2.setActionCommand("Return");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);

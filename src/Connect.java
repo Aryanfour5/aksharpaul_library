@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 public class Connect {
     private static final String URL = "jdbc:mysql://localhost:3306/libfinal";
     private static final String USER = "root";
-    private static final String PASSWORD = "#YOURDBPASSWORD";
+    private static final String PASSWORD = "YOURDBPASSWORD";
     private static final Logger LOGGER = Logger.getLogger(Connect.class.getName());
 
     // Private constructor to prevent instantiation
